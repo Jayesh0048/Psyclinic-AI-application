@@ -1,0 +1,1857 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psyclinic AI | Real-World Therapy Training</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+
+        :root {
+            --bg-primary: #0a0118;
+            --bg-secondary: #1a0b2e;
+            --accent-purple: #8b5cf6;
+            --accent-cyan: #06b6d4;
+            --accent-pink: #ec4899;
+            --glass-bg: rgba(139, 92, 246, 0.05);
+            --glass-border: rgba(139, 92, 246, 0.2);
+            --hologram-blue: #00d4ff;
+            --hologram-cyan: #00fff2;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(ellipse at top, #1a0b2e, #0a0118);
+            background-attachment: fixed;
+            overflow-x: hidden;
+            min-height: 100vh;
+            color: #e5e7eb;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 90%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(139, 92, 246, 0.1), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+            border-radius: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .view-screen {
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .view-hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(40px);
+            position: absolute;
+        }
+        .logo-container {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            z-index: 100;
+        }
+        .logo-container img {
+            width: 200px;
+            height: 60px;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 20px rgba(0, 212, 255, 0.8));
+            transition: transform 0.3s ease;
+        }
+        .logo-container img:hover { transform: scale(1.1); }
+
+        .hero-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #00d4ff 0%, #00fff2 50%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 80px rgba(0, 212, 255, 0.5);
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.5)); }
+            to { filter: drop-shadow(0 0 40px rgba(0, 255, 242, 0.8)); }
+        }
+
+        .hero-tagline {
+            font-size: 1.5rem;
+            font-weight: 300;
+            font-style: italic;
+            color: #c7d2fe;
+            letter-spacing: 0.02em;
+            margin-top: 1.5rem;
+            text-shadow: 0 2px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .hero-tagline strong {
+            font-weight: 700;
+            background: linear-gradient(135deg, #00fff2, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .profile-section-title {
+            background: linear-gradient(135deg, #00d4ff 0%, #00fff2 50%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .profile-section-icon {
+            background: linear-gradient(135deg, #00d4ff 0%, #00fff2 50%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        input, select, textarea {
+            background: rgba(10, 1, 24, 0.6);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            color: #e5e7eb;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--hologram-cyan);
+            box-shadow: 0 0 0 3px rgba(0, 255, 242, 0.1), 0 0 20px rgba(0, 212, 255, 0.4);
+            background: rgba(10, 1, 24, 0.8);
+        }
+
+        label {
+            font-weight: 600;
+            color: #c7d2fe;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            letter-spacing: 0.05em;
+        }
+        .combo-field {
+            position: relative;
+        }
+        .combo-field select {
+            appearance: none;
+            cursor: pointer;
+            padding-right: 3rem;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2300d4ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.5rem;
+        }
+        .combo-field input[type="text"] { display: none; }
+        .combo-field.custom-mode input[type="text"] { display: block; }
+        .combo-field.custom-mode select { display: none; }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff 0%, #00fff2 100%);
+            color: #000;
+            font-weight: 800;
+            padding: 1.25rem 3rem;
+            border-radius: 1rem;
+            border: none;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.6), 0 0 60px rgba(0, 255, 242, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-primary:hover::before { left: 100%; }
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 50px rgba(0, 212, 255, 0.8), 0 0 80px rgba(0, 255, 242, 0.5);
+        }
+        .btn-primary:active { transform: translateY(-1px); }
+
+        .chat-bubble {
+            animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chat-window-updated {
+            background: rgba(10, 1, 24, 0.4);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0, 212, 255, 0.5) transparent;
+        }
+
+        .chat-window-updated::-webkit-scrollbar { width: 8px; }
+        .chat-window-updated::-webkit-scrollbar-track { background: transparent; }
+        .chat-window-updated::-webkit-scrollbar-thumb {
+            background: rgba(0, 212, 255, 0.5);
+            border-radius: 4px;
+        }
+        .chat-window-updated::-webkit-scrollbar-thumb:hover { background: rgba(0, 255, 242, 0.8); }
+
+        #session-view-updated {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            height: 88vh;
+            padding: 1rem;
+        }
+
+        .chat-panel-updated {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            max-height: 88vh;
+            overflow: hidden;
+        }
+
+        .chat-window-updated {
+            flex: 1;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            border-radius: 1.5rem;
+            min-height: 0;
+        }
+
+        .input-area-updated {
+            padding: 1.25rem;
+            background: rgba(10, 1, 24, 0.6);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .input-area-updated textarea {
+            background: transparent;
+            border: none;
+            color: #e5e7eb;
+            font-size: 1.05rem;
+        }
+
+        .input-area-updated textarea:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+        .info-panel-updated {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            max-height: 88vh;
+        }
+
+        #avatar-container {
+            width: 100%;
+            height: 100%;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 0 80px rgba(0, 212, 255, 0.5), inset 0 0 100px rgba(0, 255, 242, 0.1);
+            background: #000;
+            position: relative;
+        }
+
+        /* UPDATED VIDEO STYLES: ZOOMED IN 20%, MOVED DOWN, CROPPED SIDES */
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 50%; /* Moves video down, crops ~10% left/right */
+            transform: scale(1.2); /* 20% zoom in */
+            transition: transform 0.3s ease;
+        }
+
+        .voice-visualizer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            height: 24px;
+        }
+        .voice-bar {
+            width: 3px;
+            background: linear-gradient(180deg, #00d4ff, #00fff2);
+            border-radius: 2px;
+            animation: voice-idle 1.5s ease-in-out infinite;
+        }
+        .voice-bar:nth-child(1) { height: 8px; animation-delay: 0s; }
+        .voice-bar:nth-child(2) { height: 14px; animation-delay: 0.1s; }
+        .voice-bar:nth-child(3) { height: 20px; animation-delay: 0.2s; }
+        .voice-bar:nth-child(4) { height: 14px; animation-delay: 0.3s; }
+        .voice-bar:nth-child(5) { height: 8px; animation-delay: 0.4s; }
+        @keyframes voice-idle {
+            0%, 100% { transform: scaleY(0.5); opacity: 0.5; }
+            50% { transform: scaleY(1); opacity: 1; }
+        }
+        .voice-active .voice-bar {
+            animation: voice-active-pulse 0.5s ease-in-out infinite;
+        }
+        @keyframes voice-active-pulse {
+            0%, 100% { transform: scaleY(0.3); }
+            50% { transform: scaleY(1.2); }
+        }
+        .voice-active .voice-bar:nth-child(1) { animation-delay: 0s; }
+        .voice-active .voice-bar:nth-child(2) { animation-delay: 0.05s; }
+        .voice-active .voice-bar:nth-child(3) { animation-delay: 0.1s; }
+        .voice-active .voice-bar:nth-child(4) { animation-delay: 0.15s; }
+        .voice-active .voice-bar:nth-child(5) { animation-delay: 0.2s; }
+
+        .voice-active {
+            background: linear-gradient(135deg, #00d4ff, #00fff2) !important;
+            box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.7), 0 0 30px rgba(0, 255, 242, 0.5);
+            animation: voice-button-pulse 1.5s infinite;
+        }
+
+        @keyframes voice-button-pulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.7), 0 0 30px rgba(0, 255, 242, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 0 15px rgba(0, 212, 255, 0), 0 0 40px rgba(0, 255, 242, 0.8);
+            }
+        }
+
+        .prose-custom h3 {
+            color: #c7d2fe;
+            font-weight: 700;
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .prose-custom h3 i {
+            color: #00d4ff;
+            font-size: 1.5rem;
+        }
+
+        .prose-custom strong {
+            color: #00fff2;
+            font-weight: 800;
+            background: rgba(0, 255, 242, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            padding: 2rem;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, rgba(26, 11, 46, 0.98), rgba(10, 1, 24, 0.98));
+            border: 2px solid rgba(0, 212, 255, 0.5);
+            box-shadow:
+                0 30px 80px rgba(0, 0, 0, 0.8),
+                0 0 100px rgba(0, 212, 255, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border-radius: 2rem;
+            padding: 3rem;
+            width: 95%;
+            max-width: 1100px;
+            max-height: 92vh;
+            display: flex;
+            flex-direction: column;
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1) translateY(0);
+        }
+        .modal-header h2 {
+            background: linear-gradient(135deg, #00d4ff 0%, #00fff2 50%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.5rem;
+        }
+        .modal-header i {
+            background: linear-gradient(135deg, #00d4ff 0%, #00fff2 50%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .modal-persona-prompt {
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 1.05rem;
+            background-color: rgba(10, 1, 24, 0.95);
+            border: 1px solid rgba(0, 212, 255, 0.4);
+            border-radius: 1.25rem;
+            padding: 2.5rem;
+            color: #e5e7eb;
+            line-height: 1.9;
+            max-height: 65vh;
+            overflow-y: auto;
+            box-shadow: inset 0 2px 20px rgba(0, 0, 0, 0.5);
+        }
+        .modal-persona-prompt::-webkit-scrollbar { width: 10px; }
+        .modal-persona-prompt::-webkit-scrollbar-track {
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 10px;
+        }
+        .modal-persona-prompt::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #00d4ff, #00fff2);
+            border-radius: 10px;
+        }
+        .modal-persona-prompt::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #00fff2, #8b5cf6);
+        }
+
+        @media (max-width: 768px) {
+            .hero-title { font-size: 3rem; }
+            .hero-tagline { font-size: 1.25rem; }
+            #session-view-updated {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            .logo-container img { width: 150px; height: 45px; }
+        }
+
+        /* === AUTOCOMPLETE STYLES === */
+        #diseases-suggestions {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 100%;
+            margin-top: 0.25rem;
+            background: rgba(10, 1, 24, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 1rem;
+            max-height: 280px;
+            overflow-y: auto;
+            z-index: 50;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+        #diseases-suggestions .suggestion-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 0.95rem;
+        }
+        #diseases-suggestions .suggestion-item:hover {
+            background: rgba(0, 212, 255, 0.15);
+        }
+        #diseases-suggestions .no-match {
+            padding: 0.75rem 1rem;
+            font-style: italic;
+            color: #94a3b8;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        #diseases-tags .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(6, 182, 212, 0.6);
+            color: white;
+            padding: 0.35rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            margin: 0.25rem;
+        }
+        #diseases-tags .tag button {
+            background: none;
+            border: none;
+            color: #e0f2fe;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        #diseases-tags .tag button:hover {
+            color: white;
+        }
+        #diseases-suggestions::-webkit-scrollbar {
+            width: 8px;
+        }
+        #diseases-suggestions::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        #diseases-suggestions::-webkit-scrollbar-thumb {
+            background: rgba(0, 255, 242, 0.5);
+            border-radius: 4px;
+        }
+        #diseases-suggestions::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 255, 242, 0.8);
+        }
+    </style>
+</head>
+<body class="text-gray-200">
+  <div class="logo-container">
+    <a href="/" title="Go to Home">
+        <img src="/static/logo.png" alt="Psyclinic AI Logo">
+    </a>
+</div>
+    <div id="app-container" class="relative min-h-screen p-6 md:p-12 w-full flex justify-center items-center">
+        <main id="setup-view" class="view-screen max-w-5xl mx-auto py-16">
+            <div class="text-center mb-20">
+                <h1 class="hero-title mb-4">Psyclinic AI</h1>
+                <p class="hero-tagline">"Your first step into <strong>real-world therapy</strong>"</p>
+                <p class="text-lg text-indigo-300 mt-4 max-w-2xl mx-auto opacity-80">
+                    Experience hyper-realistic patient simulations powered by advanced AI holographic interface.
+                </p>
+            </div>
+
+            <div class="glass-panel p-12 shadow-2xl">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold mb-3 profile-section-title">
+                        <i class="fas fa-user-md mr-3 profile-section-icon"></i>Describe Desired Patient Profile
+                    </h2>
+                    <p class="text-indigo-200 opacity-80">Configure the personality traits and emotional patterns for your simulation.</p>
+                </div>
+
+                <form id="session-form" class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
+                    <!-- === SMART AUTOCOMPLETE FOR DISEASES === -->
+                    <div class="md:col-span-2">
+                        <label for="diseases-input" class="block mb-3 flex items-center gap-2">
+                            <i class="fas fa-notes-medical text-cyan-400"></i>
+                            Key Behavioral or Emotional Challenges
+                        </label>
+                        <div class="relative" id="diseases-field">
+                            <input type="text" id="diseases-input" class="w-full rounded-xl p-4 text-lg focus:ring-2 focus:ring-cyan-400 transition-all pr-12" placeholder="Type to search conditions (e.g., Anxiety, PTSD)..." autocomplete="off">
+                            <!-- Suggestions Dropdown -->
+                            <div id="diseases-suggestions" class="hidden">
+                                <div class="no-match" id="no-matches">No matches found. Type to add custom.</div>
+                            </div>
+                            <!-- Selected Tags -->
+                            <div id="diseases-tags" class="flex flex-wrap mt-3"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="age" class="block mb-3 flex items-center gap-2">
+                            <i class="fas fa-birthday-cake text-cyan-400"></i>
+                            Patient Age
+                        </label>
+                        <input type="number" id="age" value="29"
+                               class="w-full rounded-xl p-4 text-lg focus:ring-2 focus:ring-cyan-400 transition-all">
+                    </div>
+
+                    <div>
+                        <label for="gender" class="block mb-3 flex items-center gap-2">
+                            <i class="fas fa-venus-mars text-pink-400"></i>
+                            Gender
+                        </label>
+                        <select id="gender" class="w-full rounded-xl p-4 text-lg focus:ring-2 focus:ring-cyan-400 transition-all">
+                            <option value="female">Female</option>
+                            <option value="male" selected>Male</option>
+                            <!-- <option value="non-binary">Non-binary</option> -->
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="ethnicity-select" class="block mb-3 flex items-center gap-2">
+                            <i class="fas fa-globe-americas text-cyan-400"></i>
+                            Ethnicity
+                        </label>
+                        <div class="combo-field" id="ethnicity-field">
+                            <select id="ethnicity-select" class="w-full rounded-xl p-4 text-lg focus:ring-2 focus:ring-cyan-400 transition-all">
+                              <option value="Asian">Asian</option>
+<option value="South Asian">South Asian</option>
+<option value="Southeast Asian">Southeast Asian</option>
+<option value="East Asian">East Asian</option>
+<option value="Asian American">Asian American</option>
+<option value="African">African</option>
+<option value="African American">African American</option>
+<option value="Caucasian/White">Caucasian / White</option>
+<option value="Hispanic/Latino">Hispanic / Latino</option>
+<option value="Latinx">Latinx</option>
+<option value="Middle Eastern">Middle Eastern</option>
+<option value="Arab">Arab</option>
+<option value="Persian/Iranian">Persian / Iranian</option>
+<option value="Native American">Native American</option>
+<option value="Indigenous/First Nations">Indigenous / First Nations</option>
+<option value="Aboriginal Australian">Aboriginal Australian</option>
+<option value="Maori">MÄori</option>
+<option value="Pacific Islander">Pacific Islander</option>
+<option value="Polynesian">Polynesian</option>
+<option value="Micronesian">Micronesian</option>
+<option value="Melanesian">Melanesian</option>
+<option value="Caribbean">Caribbean</option>
+<option value="Mixed/Multiracial">Mixed / Multiracial</option>
+<option value="Prefer not to say">Prefer not to say</option>
+                                <option value="custom">Write your own...</option>
+                            </select>
+                            <input type="text" id="ethnicity-custom" class="w-full rounded-xl p-4 text-lg focus:ring-2 focus:ring-cyan-400 transition-all" placeholder="Enter ethnicity...">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="working-domain-select" class="block mb-3 flex items-center gap-2">
+                            <i class="fas fa-briefcase text-cyan-400"></i>
+                            Profession
+                        </label>
+                        <div class="combo-field" id="profession-field">
+                            <select id="working-domain-select" class="w-full rounded-xl p-4 text-lg focus:ring-2 focus:ring-cyan-400 transition-all">
+                                <option value="Student" selected>Student</option>
+<option value="Software Engineer">Software Engineer</option>
+<option value="Graphic Designer">Graphic Designer</option>
+<option value="Teacher">Teacher</option>
+<option value="Healthcare Worker">Healthcare Worker</option>
+<option value="Business Professional">Business Professional</option>
+<option value="Retail Worker">Retail Worker</option>
+<option value="Service Industry">Service Industry</option>
+<option value="Engineer">Engineer</option>
+<option value="Doctor">Doctor</option>
+<option value="Nurse">Nurse</option>
+<option value="Therapist / Counselor">Therapist / Counselor</option>
+<option value="Sales Executive">Sales Executive</option>
+<option value="Marketing Professional">Marketing Professional</option>
+<option value="Entrepreneur / Self-employed">Entrepreneur / Self-employed</option>
+<option value="Freelancer">Freelancer</option>
+<option value="Artist">Artist</option>
+<option value="Writer">Writer</option>
+<option value="Content Creator">Content Creator</option>
+<option value="Accountant">Accountant</option>
+<option value="Administrative Assistant">Administrative Assistant</option>
+<option value="Customer Support">Customer Support</option>
+<option value="Human Resources">Human Resources</option>
+<option value="Finance Professional">Finance Professional</option>
+<option value="Construction Worker">Construction Worker</option>
+<option value="Driver">Driver</option>
+<option value="Factory Worker">Factory Worker</option>
+<option value="Lawyer">Lawyer</option>
+<option value="Police / Security">Police / Security</option>
+<option value="Military Personnel">Military Personnel</option>
+<option value="Hospitality / Hotel Staff">Hospitality / Hotel Staff</option>
+<option value="Chef / Kitchen Staff">Chef / Kitchen Staff</option>
+<option value="Farmer">Farmer</option>
+<option value="IT Support">IT Support</option>
+<option value="Project Manager">Project Manager</option>
+<option value="Researcher">Researcher</option>
+<option value="Scientist">Scientist</option>
+<option value="Real Estate Agent">Real Estate Agent</option>
+<option value="Social Worker">Social Worker</option>
+<option value="Athlete / Coach">Athlete / Coach</option>
+<option value="Unemployed">Unemployed</option>
+                                <option value="custom">Write your own...</option>
+                            </select>
+                            <input type="text" id="working-domain-custom" class="w-full rounded-xl p-4 text-lg focus:ring-2 focus:ring-cyan-400 transition-all" placeholder="Enter profession...">
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label for="session_duration" class="block mb-3 flex items-center gap-2">
+                            <i class="fas fa-clock text-pink-400"></i>
+                            Session Duration
+                        </label>
+                        <select id="session_duration" class="w-full rounded-xl p-4 text-lg focus:ring-2 focus:ring-cyan-400 transition-all">
+                            <option value="1">1 Minute (Quick Test)</option>
+                            <option value="5">5 Minutes</option>
+                            <option value="15">15 Minutes</option>
+                            <option value="30" selected>30 Minutes (Recommended)</option>
+                            <option value="45">45 Minutes</option>
+                        </select>
+                    </div>
+
+                    <div class="md:col-span-2 text-center mt-6">
+                        <button type="submit" id="start-btn" class="btn-primary">
+                            <span id="start-btn-text">
+                                <i class="fas fa-play-circle mr-3"></i>Start Simulation
+                            </span>
+                            <span id="start-btn-loader" class="hidden">
+                                <i class="fas fa-spinner fa-spin mr-3"></i>Initializing AI Persona...
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+        <div id="session-container" class="view-screen view-hidden">
+            <main class="flex justify-center h-full">
+                <div id="session-view" class="w-full">
+                    <div id="session-view-updated">
+                        <div class="chat-panel-updated glass-panel p-6">
+                           <div class="flex justify-between items-center mb-4 pb-4 border-b border-cyan-400/20 flex-shrink-0">
+    <div class="flex items-center gap-3">
+        <i class="fas fa-comments text-2xl text-cyan-400"></i>
+        <h3 class="text-xl font-bold text-cyan-300">Therapy Session</h3>
+    </div>
+
+    <div class="flex items-center gap-4">
+        <!-- MIC TOGGLE BUTTON -->
+        <button id="mic-toggle-btn" title="Turn Microphone On/Off"
+                class="bg-gray-700/60 hover:bg-gray-600 text-white font-bold w-12 h-12 rounded-full transition-all duration-300 flex items-center justify-center shadow-lg border border-cyan-400/30">
+            <i id="mic-icon" class="fas fa-microphone text-xl text-green-400"></i>
+        </button>
+
+        <!-- TIMER -->
+        <div class="text-3xl font-mono bg-black/40 px-4 py-2 rounded-lg text-cyan-300 tracking-wider border border-cyan-400/30" id="timer">00:00</div>
+    </div>
+</div>
+
+                            <div id="chat-window" class="chat-window-updated"></div>
+
+                            <div class="input-area-updated">
+                                <textarea id="chat-input" rows="2"
+                                          class="flex-grow resize-none placeholder-gray-500 text-white text-lg"
+                                          placeholder="Type your response as the therapist..."></textarea>
+                                <button id="mic-btn" title="Voice Mode"
+                                        class="bg-cyan-600/60 hover:bg-cyan-600 text-white font-bold w-14 h-14 rounded-full transition-all duration-300 flex-shrink-0 flex items-center justify-center shadow-lg">
+                                    <div class="voice-visualizer">
+                                        <div class="voice-bar"></div>
+                                        <div class="voice-bar"></div>
+                                        <div class="voice-bar"></div>
+                                        <div class="voice-bar"></div>
+                                        <div class="voice-bar"></div>
+                                    </div>
+                                </button>
+                                <button id="send-btn" title="Send Message"
+                                        class="bg-cyan-600 hover:bg-cyan-500 text-white font-bold w-14 h-14 rounded-xl transition-all duration-300 flex-shrink-0 flex items-center justify-center text-xl shadow-lg">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="info-panel-updated glass-panel p-0">
+                            <div id="avatar-container">
+                                <video id="patient-video" loop muted playsinline></video>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+<div id="assessment-view" class="glass-panel rounded-2xl p-10 w-full" style="display: none; max-width: 100%;">
+                    <div class="flex justify-between items-center mb-10 pb-6 border-b border-cyan-400/20">
+                        <h2 class="text-4xl font-extrabold text-cyan-300">
+                            <i class="fas fa-clipboard-check mr-3"></i>Supervision Report
+                        </h2>
+                        <!-- <div>
+                            <button id="edit-report-btn"
+                                    class="bg-yellow-500/20 hover:bg-yellow-500/40 border border-yellow-500/50 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 mr-3">
+                                <i class="fas fa-edit mr-2"></i>Edit
+                            </button>
+                            <button id="save-report-btn"
+                                    class="bg-green-500/20 hover:bg-green-500/40 border border-green-500/50 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 hidden">
+                                <i class="fas fa-save mr-2"></i>Save
+                            </button>
+                        </div> -->
+                    </div>
+                    <div id="report-content" class="prose prose-custom max-w-none text-gray-300 text-xl leading-relaxed">
+                        <p class="text-gray-400 text-center py-12">
+                            <i class="fas fa-spinner fa-spin text-4xl text-cyan-400 mb-4"></i><br>
+                            Generating comprehensive supervision report...
+                        </p>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <div id="persona-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold">
+                    <i class="fas fa-user-check mr-3"></i>Confirm AI Persona
+                </h2>
+            </div>
+            <div class="modal-body overflow-y-auto flex-grow">
+                <p class="text-lg text-gray-300 mb-4">Review the AI patient persona with the generated backstory:</p>
+                <pre id="persona-modal-content" class="modal-persona-prompt"></pre>
+            </div>
+            <div class="modal-footer mt-6 flex justify-end gap-4">
+                <button id="modal-cancel-btn"
+                        class="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-bold rounded-xl transition-all">
+                    <i class="fas fa-times mr-2"></i>Cancel
+                </button>
+                <button id="modal-confirm-btn"
+                        class="px-6 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold rounded-xl transition-all shadow-lg">
+                    <i class="fas fa-check mr-2"></i>Confirm & Start
+                </button>
+            </div>
+        </div>
+    </div>
+    <script>
+const API_BASE_URL = 'https://psyclinicai.octopi.health';
+        const setupView = document.getElementById('setup-view');
+        const sessionContainer = document.getElementById('session-container');
+        const sessionView = document.getElementById('session-view');
+        const assessmentView = document.getElementById('assessment-view');
+        const sessionForm = document.getElementById('session-form');
+        const startBtn = document.getElementById('start-btn');
+        const startBtnText = document.getElementById('start-btn-text');
+        const startBtnLoader = document.getElementById('start-btn-loader');
+        const chatWindow = document.getElementById('chat-window');
+        const chatInput = document.getElementById('chat-input');
+        const sendBtn = document.getElementById('send-btn');
+        const micBtn = document.getElementById('mic-btn');
+        const timerDisplay = document.getElementById('timer');
+        const patientVideo = document.getElementById('patient-video');
+        const reportContent = document.getElementById('report-content');
+        const editReportBtn = document.getElementById('edit-report-btn');
+        const saveReportBtn = document.getElementById('save-report-btn');
+        const ethnicityField = document.getElementById('ethnicity-field');
+        const ethnicitySelect = document.getElementById('ethnicity-select');
+        const ethnicityCustom = document.getElementById('ethnicity-custom');
+        const professionField = document.getElementById('profession-field');
+        const workingDomainSelect = document.getElementById('working-domain-select');
+        const workingDomainCustom = document.getElementById('working-domain-custom');
+        if (patientVideo) patientVideo.muted = true;
+        const personaModal = document.getElementById('persona-modal');
+        const personaModalContent = document.getElementById('persona-modal-content');
+        const modalCancelBtn = document.getElementById('modal-cancel-btn');
+        const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+        let chatHistory = [];
+        let systemPrompt = '';
+        let sessionTimer;
+        let transcript = "";
+        let isSending = false;
+        let isSessionActive = false;
+        let selectedGender = document.getElementById('gender').value;
+        let currentUtterance = null;
+        let isRecognitionActive = false;
+        const synth = window.speechSynthesis;
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition;
+        let silenceTimeout;
+        let pendingSessionData = null;
+
+        // === AUTOCOMPLETE FOR DISEASES ===
+        const diseasesInput = document.getElementById('diseases-input');
+        const diseasesSuggestions = document.getElementById('diseases-suggestions');
+        const diseasesTags = document.getElementById('diseases-tags');
+        const noMatches = document.getElementById('no-matches');
+
+        const allDiseases = [
+            "Academic or Occupational Problems","Acute Stress Disorder","ADHD","Adjustment Disorder",
+            "Agoraphobia","Alcohol Use Disorder","Anorexia Nervosa","Antisocial Personality Disorder",
+            "Antisocial Personality Features","Anxiety Disorder (Generalized Anxiety Disorder)","Autism Spectrum Disorder",
+            "Avoidant Personality Disorder","Binge Eating Disorder","Bipolar I Disorder","Bipolar II Disorder",
+            "Body Dysmorphic Disorder","Borderline Personality Disorder","Brief Psychotic Disorder","Bulimia Nervosa",
+            "Cannabis Use Disorder","Childhood Trauma","Communication Disorders","Complex PTSD",
+            "Conduct Disorder","Conversion Disorder","Cyclothymic Disorder","Delusional Disorder",
+            "Dependent Personality Disorder","Disinhibited Social Engagement Disorder","Disruptive Mood Dysregulation Disorder",
+            "Eating Disorder","Excoriation (Skin-Picking) Disorder","Family Conflict","Gambling Disorder",
+            "Gender Dysphoria","Generalized Anxiety Disorder","Grief and Loss","Histrionic Personality Disorder",
+            "Hoarding Disorder","Hypersomnolence Disorder","Illness Anxiety Disorder","Insomnia Disorder",
+            "Intellectual Disability","Intermittent Explosive Disorder","Major Depressive Disorder","Motor Disorders",
+            "Narcissistic Personality Disorder","Narcolepsy","Obsessive-Compulsive Disorder (OCD)",
+            "Obsessive-Compulsive Personality Disorder","Opioid Use Disorder","Oppositional Defiant Disorder",
+            "Other Specified Feeding or Eating Disorder","Other Specified Mental Disorder","Other/Unknown Substance-Related Disorder",
+            "Panic Disorder","Paranoid Personality Disorder","Persistent Depressive Disorder (Dysthymia)",
+            "Phase of Life Problem","Post-Traumatic Stress Disorder (PTSD)","Premenstrual Dysphoric Disorder",
+            "Reactive Attachment Disorder","Relationship Issues","Schizoid Personality Disorder",
+            "Schizoaffective Disorder","Schizophrenia","Schizophreniform Disorder","Schizotypal Personality Disorder",
+            "Sexual Dysfunction","Social Anxiety Disorder","Somatic Symptom Disorder","Specific Learning Disorder",
+            "Specific Phobia","Stimulant Use Disorder","Substance Use Disorder","Trichotillomania (Hair-Pulling Disorder)",
+            "Unspecified Mental Disorder","Prefer not to say"
+        ];
+
+        let selectedDiseases = [];
+
+        function initDiseases() {
+            const init = diseasesInput.value.trim();
+            if (init) {
+                selectedDiseases = init.split(',').map(s => s.trim()).filter(s => s);
+                renderTags();
+            }
+        }
+        initDiseases();
+
+        function renderTags() {
+            diseasesTags.innerHTML = '';
+            selectedDiseases.forEach((tag, i) => {
+                const el = document.createElement('div');
+                el.className = 'tag';
+                el.innerHTML = `${tag} <button type="button" onclick="removeDisease(${i})"><i class="fas fa-times"></i></button>`;
+                diseasesTags.appendChild(el);
+            });
+            updateDiseasesInput();
+        }
+        
+
+        function updateDiseasesInput() {
+            diseasesInput.value = selectedDiseases.join(', ');
+        }
+
+        window.removeDisease = function(index) {
+            selectedDiseases.splice(index, 1);
+            renderTags();
+            showSuggestions('');
+        };
+
+        function showSuggestions(query) {
+            diseasesSuggestions.innerHTML = '';
+            const q = query.toLowerCase().trim();
+            if (!q) {
+                diseasesSuggestions.classList.add('hidden');
+                return;
+            }
+
+            const matches = allDiseases.filter(d =>
+                d.toLowerCase().includes(q) && !selectedDiseases.includes(d)
+            );
+
+            if (matches.length === 0) {
+                const msg = noMatches.cloneNode(true);
+                msg.textContent = `"${query}" not found â€” will be added as custom`;
+                diseasesSuggestions.appendChild(msg);
+            } else {
+                matches.slice(0, 8).forEach(d => {
+                    const item = document.createElement('div');
+                    item.className = 'suggestion-item';
+                    item.textContent = d;
+                    item.onclick = () => {
+                        if (!selectedDiseases.includes(d)) {
+                            selectedDiseases.push(d);
+                            renderTags();
+                        }
+                        diseasesInput.value = '';
+                        diseasesSuggestions.classList.add('hidden');
+                    };
+                    diseasesSuggestions.appendChild(item);
+                });
+            }
+            diseasesSuggestions.classList.remove('hidden');
+        }
+
+        diseasesInput.addEventListener('input', (e) => {
+            const val = e.target.value;
+            const lastComma = val.lastIndexOf(',');
+            if (lastComma !== -1) {
+                showSuggestions(val.slice(lastComma + 1).trim());
+            } else {
+                showSuggestions(val.trim());
+            }
+        });
+
+        diseasesInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ',') {
+                e.preventDefault();
+                const val = diseasesInput.value.trim();
+                if (val && val !== ',') {
+                    const terms = val.split(',').map(s => s.trim()).filter(s => s);
+                    terms.forEach(t => {
+                        if (t && !selectedDiseases.includes(t)) selectedDiseases.push(t);
+                    });
+                    diseasesInput.value = '';
+                    renderTags();
+                    diseasesSuggestions.classList.add('hidden');
+                }
+            } else if (e.key === 'Backspace' && !diseasesInput.value && selectedDiseases.length) {
+                selectedDiseases.pop();
+                renderTags();
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!diseasesField.contains(e.target)) {
+                diseasesSuggestions.classList.add('hidden');
+            }
+        });
+
+        // === REST OF ORIGINAL SCRIPT (unchanged except handleStartSession override) ===
+        document.getElementById('gender').addEventListener('change', function() {
+            selectedGender = this.value;
+        });
+
+        function startRecognition() {
+            if (!recognition || !isSessionActive || isSending || synth.speaking || isRecognitionActive) return;
+            try {
+                recognition.start();
+                micBtn.classList.add('voice-active');
+                isRecognitionActive = true;
+            } catch (err) {
+                console.warn("Recognition already running:", err);
+            }
+        }
+
+        synth.onvoiceschanged = () => {
+            const voices = synth.getVoices();
+            console.log("VOICES READY:", voices.length);
+        };
+        synth.getVoices();
+
+        ethnicitySelect.addEventListener('change', () => {
+            if (ethnicitySelect.value === 'custom') {
+                ethnicityField.classList.add('custom-mode');
+                ethnicityCustom.focus();
+            } else {
+                ethnicityField.classList.remove('custom-mode');
+            }
+        });
+
+        workingDomainSelect.addEventListener('change', () => {
+            if (workingDomainSelect.value === 'custom') {
+                professionField.classList.add('custom-mode');
+                workingDomainCustom.focus();
+            } else {
+                professionField.classList.remove('custom-mode');
+            }
+        });
+
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+            recognition.maxAlternatives = 1;
+            recognition.onstart = () => {
+                isRecognitionActive = true;
+                micBtn.classList.add('voice-active');
+            };
+            recognition.onresult = (event) => {
+                let transcriptText = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    transcriptText += event.results[i][0].transcript;
+                }
+                chatInput.value = transcriptText.trim();
+                if (event.results[event.results.length - 1].isFinal) {
+                    handleSendMessage();
+                }
+                clearTimeout(silenceTimeout);
+                silenceTimeout = setTimeout(() => {
+                    if (isSessionActive && !synth.speaking && !isSending) {
+                        recognition.stop();
+                    }
+                }, 60000);
+            };
+            recognition.onend = () => {
+                isRecognitionActive = false;
+                micBtn.classList.remove('voice-active');
+                if (isSessionActive && !synth.speaking && !isSending) {
+                    setTimeout(() => {
+                        if (isSessionActive && !isSending && !synth.speaking) {
+                            startRecognition();
+                        }
+                    }, 500);
+                }
+            };
+            recognition.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
+                isRecognitionActive = false;
+                if (event.error === 'no-speech' || event.error === 'audio-capture') {
+                    setTimeout(() => {
+                        if (isSessionActive && !synth.speaking && !isSending) {
+                            startRecognition();
+                        }
+                    }, 1000);
+                }
+            };
+        } else {
+            micBtn.style.display = 'none';
+        }
+
+        sessionForm.addEventListener('submit', handleStartSession);
+        sendBtn.addEventListener('click', handleSendMessage);
+        micBtn.addEventListener('click', () => {
+            if (recognition && !micBtn.classList.contains('voice-active')) {
+                if (synth.speaking) {
+                    synth.cancel();
+                    currentUtterance = null;
+                    patientVideo.pause();
+                }
+                startRecognition();
+                clearTimeout(silenceTimeout);
+            }
+        });
+
+        chatInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSendMessage();
+            }
+        });
+
+        // editReportBtn.addEventListener('click', () => toggleReportEdit(true));
+        // saveReportBtn.addEventListener('click', () => toggleReportEdit(false));
+        modalCancelBtn.addEventListener('click', () => {
+            personaModal.classList.remove('active');
+            toggleStartButtonLoading(false);
+            pendingSessionData = null;
+        });
+        modalConfirmBtn.addEventListener('click', () => {
+            personaModal.classList.remove('active');
+            if (pendingSessionData) {
+                initiateSession(pendingSessionData);
+                pendingSessionData = null;
+            }
+        });
+// === MIC TOGGLE LOGIC ===
+const micToggleBtn = document.getElementById('mic-toggle-btn');
+const micIcon = document.getElementById('mic-icon');
+let isMicEnabled = true; // Start with mic ON
+
+micToggleBtn.addEventListener('click', () => {
+    isMicEnabled = !isMicEnabled;
+
+    if (isMicEnabled) {
+        // TURN MIC ON
+        micIcon.className = 'fas fa-microphone text-xl text-green-400';
+        micToggleBtn.title = 'Turn Microphone Off';
+        micToggleBtn.classList.remove('ring-2', 'ring-red-400');
+        micToggleBtn.classList.add('ring-2', 'ring-green-400');
+
+        // Resume recognition if session is active
+        if (isSessionActive && recognition && !isRecognitionActive) {
+            setTimeout(startRecognition, 300);
+        }
+    } else {
+        // TURN MIC OFF
+        micIcon.className = 'fas fa-microphone-slash text-xl text-red-400';
+        micToggleBtn.title = 'Turn Microphone On';
+        micToggleBtn.classList.remove('ring-2', 'ring-green-400');
+        micToggleBtn.classList.add('ring-2', 'ring-red-400');
+
+        // Stop recognition immediately
+        if (recognition && isRecognitionActive) {
+            recognition.stop();
+            isRecognitionActive = false;
+        }
+    }
+});
+
+// === MODIFY startRecognition() to respect mic toggle ===
+const originalStartRecognition = startRecognition;
+window.startRecognition = function() {
+    if (!isMicEnabled || !recognition || !isSessionActive || isSending || synth.speaking || isRecognitionActive) return;
+
+    try {
+        recognition.start();
+        isRecognitionActive = true;
+        // Update floating mic button in input area (optional sync)
+        document.querySelector('#mic-btn .voice-visualizer').classList.add('voice-active');
+    } catch (err) {
+        console.warn("Recognition already running:", err);
+    }
+};
+
+// === ALSO STOP RECOGNITION WHEN MIC IS TURNED OFF ===
+const originalRecognitionOnEnd = recognition.onend;
+recognition.onend = function() {
+    isRecognitionActive = false;
+    document.querySelector('#mic-btn .voice-visualizer').classList.remove('voice-active');
+
+    if (isSessionActive && isMicEnabled && !synth.speaking && !isSending) {
+        setTimeout(() => {
+            if (isSessionActive && !isSending && !isRecognitionActive && isMicEnabled) {
+                startRecognition();
+            }
+        }, 500);
+    }
+
+    if (originalRecognitionOnEnd) originalRecognitionOnEnd();
+};
+// === OVERRIDE handleStartSession TO USE selectedDiseases ===
+const originalHandleStartSession = handleStartSession;
+async function handleStartSession(e) {
+    e.preventDefault();
+    toggleStartButtonLoading(true);
+    
+    console.log("=== START SESSION DEBUG ===");
+    
+    // Collect form data with debugging
+    selectedGender = document.getElementById('gender').value;
+    const age = parseInt(document.getElementById('age').value);
+
+    let ethnicity;
+    if (ethnicitySelect.value === 'custom') {
+        ethnicity = ethnicityCustom.value.trim() || 'Not specified';
+    } else {
+        ethnicity = ethnicitySelect.value;
+    }
+
+    let working_domain;
+    if (workingDomainSelect.value === 'custom') {
+        working_domain = workingDomainCustom.value.trim() || 'Not specified';
+    } else {
+        working_domain = workingDomainSelect.value;
+    }
+
+    const diseases = selectedDiseases.length > 0 ? selectedDiseases.join(', ') : 'Not specified';
+
+    const formData = {
+        age: age,
+        ethnicity: ethnicity,
+        diseases: diseases,
+        working_domain: working_domain,
+        gender: selectedGender,
+        session_duration: parseInt(document.getElementById('session_duration').value),
+    };
+
+    console.log("Form data being sent:", formData);
+    console.log("Selected diseases array:", selectedDiseases);
+    console.log("API URL:", `${API_BASE_URL}/start_session`);
+
+    try {
+        console.log("Making API request to start_session...");
+        
+        const response = await fetch(`${API_BASE_URL}/start_session`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData),
+        });
+
+        console.log("Response status:", response.status);
+        console.log("Response headers:", Object.fromEntries(response.headers.entries()));
+
+        if (!response.ok) {
+            const errText = await response.text();
+            console.error("Error response text:", errText);
+            let errDetail = 'Failed to start session.';
+            try { 
+                errDetail = JSON.parse(errText).detail; 
+                console.error("Parsed error detail:", errDetail);
+            } catch (parseError) {
+                console.error("Could not parse error response:", parseError);
+            }
+            throw new Error(errDetail);
+        }
+
+        const data = await response.json();
+        console.log("Full API response data:", data);
+        
+        // Debug: Check if video_filename exists in response
+        if (!data.video_filename) {
+            console.error("VIDEO FILENAME MISSING FROM RESPONSE!");
+            console.log("Available keys in response:", Object.keys(data));
+        } else {
+            console.log("Video filename received:", data.video_filename);
+        }
+
+        if (!data.system_prompt) {
+            console.error("SYSTEM PROMPT MISSING FROM RESPONSE!");
+        }
+
+        // Store all relevant data including video_filename
+        pendingSessionData = { 
+            ...formData, 
+            system_prompt: data.system_prompt,
+            video_filename: data.video_filename // Make sure this is included
+        };
+
+        console.log("Pending session data:", pendingSessionData);
+
+        // Update modal content
+        const formattedPrompt = data.system_prompt
+            .replace(/Rules:[\s\S]*/g, '')
+            .replace(/</g, "&lt;").replace(/>/g, "&gt;")
+            .replace(/Backstory:[\s\S]*?(?=Rules:|$)/g, (match) => {
+                return match.replace(/(".*?")/g, '<strong>$1</strong>');
+            });
+        
+        console.log("Formatted prompt length:", formattedPrompt.length);
+        personaModalContent.innerHTML = formattedPrompt;
+        personaModal.classList.add('active');
+
+    } catch (error) {
+        console.error("Full error details:", error);
+        console.error("Error name:", error.name);
+        console.error("Error message:", error.message);
+        console.error("Error stack:", error.stack);
+        
+        alert(`Error: ${error.message}. \n\nCheck browser console for details. Is the backend server running?`);
+        toggleStartButtonLoading(false);
+    }
+}
+
+function initiateSession(sessionData) {
+    try {
+        systemPrompt = sessionData.system_prompt;
+
+        // === GET VIDEO FROM API (NO DEFAULT) ===
+        const videoFilename = sessionData.video_filename;
+        if (!videoFilename) {
+            throw new Error("No video filename returned from server");
+        }
+
+        // === FORCE FULL VIDEO RELOAD ===
+        const video = document.getElementById('patient-video');
+        video.pause();
+        video.removeAttribute('src');  // Remove old source
+        video.load();                  // Clear cache
+
+        // Set new source
+        video.src = `/videos/${videoFilename}`;
+        video.load();                  // Load fresh
+
+        console.log(`NOW PLAYING: /videos/${videoFilename}`);
+
+        // === UI & Session ===
+        setupView.classList.add('view-hidden');
+        sessionContainer.classList.remove('view-hidden');
+        switchView('session');
+        isSessionActive = true;
+        isSending = false;
+        startTimer(sessionData.session_duration);
+
+        // === Prime for autoplay ===
+        video.muted = true;
+        const playPromise = video.play();
+        if (playPromise) {
+            playPromise
+                .then(() => video.pause())
+                .catch(() => console.log("Autoplay blocked (normal)"));
+        }
+
+        // === Start mic ===
+        if (recognition) setTimeout(startRecognition, 1000);
+
+    } catch (error) {
+        console.error("Session failed:", error);
+        alert("Session error: " + error.message);
+    } finally {
+        toggleStartButtonLoading(false);
+    }
+}
+
+
+        async function handleSendMessage() {
+            const userMessage = chatInput.value.trim();
+            if (!userMessage || !isSessionActive || isSending) return;
+            if (chatHistory.length > 0 && chatHistory[chatHistory.length - 1].role === 'user') {
+                alert("Please wait for the patient to reply before sending again.");
+                return;
+            }
+            isSending = true;
+            chatInput.value = '';
+            chatInput.disabled = true;
+            sendBtn.disabled = true;
+            sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            if (synth.speaking) {
+                synth.cancel();
+                currentUtterance = null;
+                patientVideo.pause();
+            }
+            if (recognition && isRecognitionActive) recognition.stop();
+            addMessageToChat('user', userMessage);
+            const apiHistory = chatHistory.map(item => ({ role: item.role, content: item.content }));
+            try {
+                const response = await fetch(`${API_BASE_URL}/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ history: apiHistory, persona_prompt: systemPrompt }),
+                });
+                if (!response.ok) {
+                    const errText = await response.text();
+                    let errDetail = 'Failed to get reply.';
+                    try { errDetail = JSON.parse(errText).detail || errText; } catch {}
+                    if (errDetail.includes("Consecutive") || errDetail.includes("same role")) {
+                        chatHistory.pop();
+                        if (chatWindow.lastElementChild) chatWindow.removeChild(chatWindow.lastElementChild);
+                        alert("Please wait for the patient to reply before sending again.");
+                        throw new Error("Wait for reply");
+                    }
+                    throw new Error(errDetail);
+                }
+                const data = await response.json();
+                addMessageToChat('assistant', data.reply);
+            } catch (error) {
+                console.error("Chat error:", error);
+                if (!error.message.includes("Wait for reply")) {
+                    addMessageToChat('system', `Warning: ${error.message}`);
+                }
+            } finally {
+                isSending = false;
+                chatInput.disabled = false;
+                sendBtn.disabled = false;
+                sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+                chatInput.focus();
+            }
+        }
+
+ async function handleEndSession() {
+    if (!isSessionActive) return;
+    isSessionActive = false;
+    clearInterval(sessionTimer);
+    addMessageToChat('system', 'Session has ended. Generating your supervision report...');
+    switchView('assessment');
+    patientVideo.pause();
+    if (recognition) {
+        recognition.stop();
+        isRecognitionActive = false;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/generate_report`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                transcript,
+                chat_history: chatHistory
+            }),
+        });
+
+        if (!response.ok) {
+            const err = await response.json();
+            throw new Error(err.detail || 'Failed to generate report.');
+        }
+
+        const data = await response.json();
+
+        // === 1. CONVERSATION ANALYSIS (FIRST) ===
+        let chatAnalysisHTML = '';
+        if (data.improvements && data.improvements.length > 0) {
+            chatAnalysisHTML = `
+                <div class="mb-16">
+                    <h2 class="text-4xl font-extrabold mb-6 text-cyan-300 flex items-center gap-3">
+                        <i class="fas fa-comments"></i> Conversation Analysis
+                    </h2>
+                    <p class="text-gray-400 mb-8 text-sm leading-relaxed">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        <span class="text-green-400">Green messages</span> are effective. 
+                        <span class="text-red-400">Red messages</span> need improvement — click the arrow for feedback.
+                    </p>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- LEFT: WhatsApp-style chat -->
+                        <div class="bg-[#0a0118] rounded-2xl border border-cyan-400/20 p-6 overflow-y-auto" style="max-height: 70vh;">
+                            <div class="space-y-4">
+            `;
+
+            let improvementIndex = 0;
+            chatHistory.forEach((msg, index) => {
+                if (msg.role === 'user') {
+                    const improvement = data.improvements[improvementIndex];
+                    const needsImprovement = improvement && improvement.needs_improvement;
+                    const messageId = `msg-${improvementIndex}`;
+
+                    chatAnalysisHTML += `
+                        <div class="flex justify-end items-start gap-2 group">
+                            ${needsImprovement ? `
+                                <button onclick="showImprovement(${improvementIndex})"
+                                        class="flex-shrink-0 w-9 h-9 rounded-full bg-red-500/30 border border-red-400/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500/50 mt-2 shadow-lg"
+                                        title="View improvement suggestion">
+                                    <i class="fas fa-arrow-right text-red-300 text-sm"></i>
+                                </button>
+                            ` : ''}
+                            <div id="${messageId}" class="max-w-[78%] ${needsImprovement ? 'bg-red-900/40 border-red-500/50' : 'bg-green-900/40 border-green-500/50'} border rounded-2xl rounded-tr-none p-4 shadow-md transition-all">
+                                <p class="text-gray-100 text-sm leading-relaxed">${escapeHtml(msg.content)}</p>
+                                <div class="flex justify-end items-center gap-2 mt-2">
+                                    <i class="fas fa-user-md text-xs ${needsImprovement ? 'text-red-300' : 'text-green-300'}"></i>
+                                    <span class="text-xs ${needsImprovement ? 'text-red-300' : 'text-green-300'} font-bold">You</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    improvementIndex++;
+                } else if (msg.role === 'assistant') {
+                    chatAnalysisHTML += `
+                        <div class="flex justify-start">
+                            <div class="max-w-[78%] bg-gray-800/70 border border-gray-600/50 rounded-2xl rounded-tl-none p-4 shadow-md">
+                                <p class="text-gray-100 text-sm leading-relaxed">${escapeHtml(msg.content)}</p>
+                                <div class="flex items-center gap-2 mt-2">
+                                    <i class="fas fa-user text-xs text-cyan-300"></i>
+                                    <span class="text-xs text-cyan-300 font-bold">Patient</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            chatAnalysisHTML += `
+                            </div>
+                        </div>
+
+                        <!-- RIGHT: Improvement Panel -->
+                        <div class="bg-[#0a0118] rounded-2xl border border-cyan-400/20 p-6 overflow-y-auto" style="max-height: 70vh;">
+                            <div id="improvement-panel">
+                                <div class="flex flex-col items-center justify-center h-full text-center text-gray-500 py-16">
+                                    <i class="fas fa-hand-pointer text-6xl mb-5 text-cyan-400/20"></i>
+                                    <p class="text-lg font-medium">Click any <span class="text-red-400">red arrow</span> to see<br/>personalized improvement suggestions</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Store for click handler
+            window.improvementData = data.improvements;
+        }
+
+        // === 2. SUPERVISION REPORT (SECOND) ===
+        const styledReport = data.report
+            .replace(/###\s*(\d+)\.\s*(.*?)\n/g, (match, num, title) => {
+                const icons = { 
+                    '1': 'fa-clipboard-check', 
+                    '2': 'fa-star', 
+                    '3': 'fa-exclamation-triangle', 
+                    '4': 'fa-lightbulb', 
+                    '5': 'fa-bullseye',
+                    '6': 'fa-tasks'
+                };
+                return `<h3 class="text-2xl font-bold text-cyan-300 mt-12 mb-5 flex items-center gap-3">
+                    <i class="fas ${icons[num] || 'fa-check-circle'} text-xl"></i> 
+                    ${title}
+                </h3>`;
+            })
+            .replace(/Rating: (\d+)\/5/g, '<span class="inline-block bg-gradient-to-r from-cyan-500 to-blue-500 text-black font-bold px-3 py-1 rounded-full text-sm">Rating: $1/5</span>');
+
+        // === VISUAL DIVIDER ===
+        const divider = `
+            <div class="my-16 flex items-center">
+                <div class="flex-1 h-px bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent"></div>
+                <div class="mx-6 text-cyan-400/60 font-bold tracking-widest">● ● ●</div>
+                <div class="flex-1 h-px bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent"></div>
+            </div>
+        `;
+
+        // === FINAL RENDER: ANALYSIS FIRST, REPORT SECOND ===
+        reportContent.innerHTML = 
+            chatAnalysisHTML + 
+            (chatAnalysisHTML ? divider : '') + 
+            marked.parse(styledReport);
+
+    } catch (error) {
+        console.error(error);
+        reportContent.innerHTML = `
+            <div class="text-center py-12">
+                <i class="fas fa-exclamation-triangle text-5xl text-red-400 mb-4"></i>
+                <p class="text-red-400 text-xl">Error: Could not generate the report.</p>
+                <p class="text-gray-500 mt-2">${error.message}</p>
+            </div>
+        `;
+    }
+}
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+        function switchView(view) {
+            sessionView.style.display = view === 'session' ? 'block' : 'none';
+            assessmentView.style.display = view === 'assessment' ? 'block' : 'none';
+        }
+
+        function addMessageToChat(role, content) {
+            if (role !== 'system') chatHistory.push({ role, content });
+            transcript += `${role === 'user' ? 'Therapist' : 'Patient'}: ${content}\n\n`;
+            const wrapper = document.createElement('div');
+            wrapper.className = 'chat-bubble p-5 rounded-2xl max-w-[85%]';
+            if (role === 'user') {
+                wrapper.className += ' bg-gradient-to-r from-cyan-600 to-blue-600 text-white self-end rounded-br-none shadow-lg';
+            } else if (role === 'assistant') {
+                wrapper.className += ' bg-gray-800/80 text-gray-200 self-start rounded-bl-none border border-cyan-400/20';
+                speak(content);
+            } else {
+                wrapper.className += ' bg-black/20 text-gray-400 self-center text-base italic w-full text-center';
+            }
+            wrapper.innerHTML = marked.parse(content.replace(/\n/g, '<br>'));
+            chatWindow.appendChild(wrapper);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        // function toggleReportEdit(edit) {
+        //     reportContent.contentEditable = edit;
+        //     editReportBtn.style.display = edit ? 'none' : 'inline-block';
+        //     saveReportBtn.style.display = edit ? 'inline-block' : 'none';
+        //     reportContent.classList.toggle('ring-2', edit);
+        //     reportContent.classList.toggle('ring-cyan-400', edit);
+        //     if (edit) reportContent.focus();
+        // }
+
+        function toggleStartButtonLoading(load) {
+            startBtn.disabled = load;
+            startBtnText.classList.toggle('hidden', load);
+            startBtnLoader.classList.toggle('hidden', !load);
+        }
+
+        function startTimer(mins) {
+            let secs = mins * 60;
+            updateTimerDisplay(secs);
+            sessionTimer = setInterval(() => {
+                secs--;
+                updateTimerDisplay(secs);
+                if (secs <= 0) handleEndSession();
+            }, 1000);
+        }
+
+        function updateTimerDisplay(secs) {
+            const m = Math.floor(secs / 60).toString().padStart(2, '0');
+            const s = (secs % 60).toString().padStart(2, '0');
+            timerDisplay.textContent = `${m}:${s}`;
+            if (secs <= 60 && !timerDisplay.classList.contains('text-red-400')) {
+                timerDisplay.classList.remove('text-cyan-300');
+                timerDisplay.classList.add('text-red-400', 'animate-pulse');
+            } else if (secs > 60 && timerDisplay.classList.contains('text-red-400')) {
+                timerDisplay.classList.remove('text-red-400', 'animate-pulse');
+                timerDisplay.classList.add('text-cyan-300');
+            }
+        }
+
+// ──────────────────────────────────────────────────────────────────────
+//  REPLACE ONLY THE speak() FUNCTION – MALE UNTOUCHED
+// ──────────────────────────────────────────────────────────────────────
+function speak(text) {
+    if (synth.speaking) synth.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+
+    const patientAge = parseInt(document.getElementById('age').value) || 29;
+    const isMale = selectedGender === 'male';
+
+    // ────────────────────── 1. VOICE SELECTION ──────────────────────
+    const getVoices = () => synth.getVoices();
+
+    // === MALE – 100% CORRECT (unchanged) ===
+    const getIndianMale = () => {
+        const v = getVoices();
+        return v.find(voice =>
+            voice.lang === 'en-IN' && voice.name.toLowerCase().includes('male')
+        ) || v.find(voice => voice.lang === 'en-IN');
+    };
+
+    const getDeepMale = () => {
+        const v = getVoices();
+        const deepNames = ['Microsoft David', 'Microsoft Mark', 'Microsoft Guy',
+                           'Google UK English Male', 'Daniel', 'Oliver', 'George'];
+        return v.find(voice => deepNames.some(n => voice.name.includes(n))) ||
+               v.find(voice => voice.lang.startsWith('en') && !voice.name.toLowerCase().includes('female'));
+    };
+
+    // === FEMALE – ONLY INDIAN VOICE (en‑IN) ===
+    const getIndianFemale = () => {
+        const v = getVoices();
+        return v.find(voice =>
+            voice.lang === 'en-IN' && voice.name.toLowerCase().includes('female')
+        ) || v.find(voice => voice.lang === 'en-IN');   // any en‑IN if no female
+    };
+
+    const loadVoice = () => {
+        let voice;
+
+        if (isMale) {
+            if (patientAge <= 25) {
+                voice = getIndianMale() || getDeepMale();
+            } else {
+                voice = getDeepMale() || getIndianMale() || getVoices()[0];
+            }
+        } else {
+            // ALL FEMALES → Indian voice only
+            voice = getIndianFemale() || getVoices()[0];
+        }
+
+        // SAFETY: never give a male voice to a female patient
+        if (!isMale && voice.name.toLowerCase().includes('male')) {
+            voice = getIndianFemale() || getVoices()[0];
+        }
+
+        return voice;
+    };
+
+    // ────────────────────── 2. ASSIGN + PITCH / RATE ──────────────────────
+    const assign = () => {
+        const voice = loadVoice();
+        if (!voice) return setTimeout(assign, 300);
+
+        utter.voice = voice;
+
+        // ── MALE – EXACTLY YOUR WORKING SETTINGS ─────────────────────
+        if (isMale) {
+            if (patientAge <= 25) {
+                utter.rate = 1.0;   utter.pitch = 1.0;
+            } else if (patientAge <= 40) {
+                utter.rate = 0.95;  utter.pitch = 0.9;
+            } else if (patientAge <= 60) {
+                utter.rate = 0.90;  utter.pitch = 0.8;
+            } else {
+                utter.rate = 0.80;  utter.pitch = 0.7;
+            }
+        }
+        // ── FEMALE – 18‑25 YOUNG & INDIAN (fixed typo) ─────────────────────
+        else {
+            if (patientAge <= 25) {               // 18‑25
+                utter.rate = 1.0;                 // normal speed
+                utter.pitch = 1.3;                // slightly higher → youthful
+            } else if (patientAge <= 40) {        // 26‑40
+                utter.rate = 0.98;
+                utter.pitch = 1.25;
+            } else if (patientAge <= 60) {        // 41‑60
+                utter.rate = 0.95;
+                utter.pitch = 1.15;
+            } else {                              // 61+
+                utter.rate = 0.88;
+                utter.pitch = 1.05;
+            }
+        }
+
+        utter.volume = 1.0;
+
+        console.log(
+            `VOICE: ${voice.name} | Lang: ${voice.lang} ` +
+            `| Age: ${patientAge} | Gender: ${selectedGender} ` +
+            `| Pitch: ${utter.pitch} | Rate: ${utter.rate}`
+        );
+
+        // ── VIDEO & UI CALLBACKS ─────────────────────────────────────
+        utter.onstart = () => patientVideo.play().catch(() => {});
+        utter.onend = () => {
+            patientVideo.pause();
+            isSending = false;
+            chatInput.disabled = false;
+            sendBtn.disabled = false;
+            sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+            chatInput.focus();
+
+            if (recognition && isSessionActive) {
+                setTimeout(() => {
+                    if (isSessionActive && !isSending && !isRecognitionActive) startRecognition();
+                }, 300);
+            }
+        };
+
+        synth.speak(utter);
+    };
+
+    // ────────────────────── 3. WAIT FOR VOICES ──────────────────────
+    if (synth.getVoices().length === 0) {
+        synth.onvoiceschanged = () => { synth.onvoiceschanged = null; assign(); };
+    } else {
+        assign();
+    }
+}
+        // NEW: Show improvement in right panel
+        window.showImprovement = function(index) {
+            const improvement = window.improvementData[index];
+            if (!improvement) return;
+            
+            const panel = document.getElementById('improvement-panel');
+            
+            // Highlight the selected message
+            document.querySelectorAll('[id^="msg-"]').forEach(el => {
+                el.style.boxShadow = '';
+            });
+            document.getElementById(`msg-${index}`).style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.5)';
+            
+            // Parse the structured response
+            const lines = improvement.improvement.split('\n');
+            let status = '', analysis = '', suggestion = '';
+            
+            lines.forEach(line => {
+                if (line.startsWith('STATUS:')) status = line.replace('STATUS:', '').trim();
+                else if (line.startsWith('ANALYSIS:')) analysis = line.replace('ANALYSIS:', '').trim();
+                else if (line.startsWith('SUGGESTION:')) suggestion = line.replace('SUGGESTION:', '').trim();
+                else if (line.trim() && !status && !analysis) analysis += ' ' + line.trim();
+                else if (line.trim() && !suggestion) suggestion += ' ' + line.trim();
+            });
+            
+            panel.innerHTML = `
+                <div class="space-y-6">
+                    <div class="border-b border-cyan-400/20 pb-4">
+                        <h3 class="text-xl font-bold text-red-300 flex items-center gap-2 mb-3">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Message #${index + 1} - Needs Improvement
+                        </h3>
+                        <div class="bg-red-900/20 border border-red-400/30 rounded-lg p-4 mb-4">
+                            <p class="text-sm text-gray-400 mb-2 font-semibold">You said:</p>
+                            <p class="text-gray-200">"${improvement.therapist_message}"</p>
+                        </div>
+                        ${improvement.patient_response ? `
+                            <div class="bg-gray-800/40 border border-gray-600/30 rounded-lg p-3">
+                                <p class="text-xs text-gray-400 mb-1 font-semibold">Patient responded:</p>
+                                <p class="text-gray-300 text-sm">"${improvement.patient_response}"</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-lg font-bold text-yellow-300 flex items-center gap-2 mb-3">
+                            <i class="fas fa-search"></i>
+                            Analysis
+                        </h4>
+                        <div class="bg-yellow-900/10 border border-yellow-400/30 rounded-lg p-4">
+                            <p class="text-gray-200 leading-relaxed">${analysis}</p>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-lg font-bold text-green-300 flex items-center gap-2 mb-3">
+                            <i class="fas fa-lightbulb"></i>
+                            Better Alternative
+                        </h4>
+                        <div class="bg-green-900/10 border border-green-400/30 rounded-lg p-4">
+                            <p class="text-gray-200 leading-relaxed">${suggestion}</p>
+                        </div>
+                    </div>
+                    
+                    <button onclick="document.getElementById('improvement-panel').innerHTML = \`<div class='flex flex-col items-center justify-center h-full text-center text-gray-500 py-12'><i class='fas fa-hand-pointer text-5xl mb-4 text-cyan-400/30'></i><p class='text-lg'>Click on a red message arrow<br/>to see improvement suggestions</p></div>\`; document.querySelectorAll('[id^=\\'msg-\\']').forEach(el => el.style.boxShadow = '');"
+                            class="w-full bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-xl transition-all">
+                        <i class="fas fa-times mr-2"></i>Close
+                    </button>
+                </div>
+            `;
+        };
+    </script>
+</body>
+</html>

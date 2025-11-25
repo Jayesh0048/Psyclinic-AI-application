@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psyclinic AI | User Database</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+       
+        :root {
+            --bg-primary: #0a0118;
+            --bg-secondary: #1a0b2e;
+            --accent-purple: #8b5cf6;
+            --accent-cyan: #06b6d4;
+            --accent-pink: #ec4899;
+            --glass-bg: rgba(139, 92, 246, 0.05);
+            --glass-border: rgba(139, 92, 246, 0.2);
+            --hologram-blue: #00d4ff;
+            --hologram-cyan: #00fff2;
+            --text-primary: #e5e7eb;
+            --text-muted: #94a3b8;
+            --danger: #ff4757;
+            --danger-hover: #ee5a6f;
+        }
+       
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+       
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(ellipse at top, #1a0b2e, #0a0118);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--text-primary);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+       
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 90%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+       
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+       
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(139, 92, 246, 0.1), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+            border-radius: 2rem;
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 1200px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+       
+        .logo-container {
+            position: absolute;
+            top: 24px;
+            left: 24px;
+            z-index: 100;
+        }
+        .logo-container img {
+            width: 200px;
+            height: 60px;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 20px rgba(0, 212, 255, 0.8));
+            transition: transform 0.3s ease;
+        }
+        .logo-container img:hover { transform: scale(1.1); }
+       
+        .hero-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #00d4ff 0%, #00fff2 50%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 80px rgba(0, 212, 255, 0.5);
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            animation: glow 3s ease-in-out infinite alternate;
+            text-align: center;
+        }
+       
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.5)); }
+            to { filter: drop-shadow(0 0 40px rgba(0, 255, 242, 0.8)); }
+        }
+       
+        .header {
+            padding: 2rem 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+        }
+       
+        .header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00d4ff, #00fff2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+       
+        .back-link {
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: #e5e7eb;
+            text-decoration: none;
+            border-radius: 1rem;
+            font-weight: 600;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+        .back-link:hover {
+            background: rgba(0, 212, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+        }
+       
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem 2.5rem;
+        }
+       
+        .stat-card {
+            background: rgba(10, 1, 24, 0.6);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(0, 212, 255, 0.3);
+            border-color: var(--hologram-cyan);
+        }
+        .stat-card .number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00d4ff, #00fff2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stat-card .label {
+            font-size: 0.9rem;
+            color: #c7d2fe;
+            margin-top: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+       
+        .controls {
+            padding: 0 2.5rem 1.5rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+       
+        .search-box {
+            flex: 1;
+            min-width: 280px;
+            padding: 1rem 1.25rem;
+            background: rgba(10, 1, 24, 0.6);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 1rem;
+            color: #e5e7eb;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        .search-box:focus {
+            outline: none;
+            border-color: var(--hologram-cyan);
+            box-shadow: 0 0 0 3px rgba(0, 255, 242, 0.1), 0 0 20px rgba(0, 212, 255, 0.4);
+            background: rgba(10, 1, 24, 0.8);
+        }
+        .search-box::placeholder {
+            color: #94a3b8;
+        }
+       
+        .btn {
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: 1rem;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            backdrop-filter: blur(10px);
+        }
+       
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff, #00fff2);
+            color: #000;
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.4);
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 35px rgba(0, 212, 255, 0.6);
+        }
+       
+        .btn-export {
+            background: linear-gradient(135deg, #10b981, #34d399);
+            color: white;
+        }
+        .btn-export:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(16, 185, 129, 0.4);
+        }
+       
+        .btn-download {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e5e7eb;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+        .btn-download:hover {
+            background: rgba(0, 212, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .btn-delete {
+            background: var(--danger);
+            color: white;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.8rem;
+            border-radius: 0.75rem;
+        }
+        .btn-delete:hover {
+            background: var(--danger-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(255, 71, 87, 0.4);
+        }
+       
+        .table-container {
+            padding: 0 2.5rem 2rem;
+            overflow-x: auto;
+        }
+       
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 0.75rem;
+        }
+       
+        thead th {
+            background: rgba(10, 1, 24, 0.8);
+            color: #c7d2fe;
+            padding: 1.25rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.3);
+        }
+       
+        tbody tr {
+            background: rgba(10, 1, 24, 0.6);
+            backdrop-filter: blur(15px);
+            transition: all 0.3s;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+        tbody tr:hover {
+            background: rgba(10, 1, 24, 0.9);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.2);
+            border-color: var(--hologram-cyan);
+        }
+       
+        td {
+            padding: 1.25rem 1.5rem;
+            color: #e5e7eb;
+        }
+       
+        .email {
+            font-weight: 600;
+            color: #00d4ff;
+        }
+       
+        .hash {
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.35rem 0.6rem;
+            border-radius: 0.5rem;
+            display: inline-block;
+        }
+       
+        .date {
+            color: #c7d2fe;
+            font-size: 0.9rem;
+        }
+       
+        .badge {
+            display: inline-block;
+            padding: 0.4rem 0.9rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .badge-new {
+            background: rgba(34, 197, 94, 0.3);
+            color: #86efac;
+            border: 1px solid rgba(34, 197, 94, 0.5);
+        }
+        .badge-old {
+            background: rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+       
+        .loading, .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s infinite;
+        }
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+
+        .delete-confirm {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(10, 1, 24, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 212, 255, 0.4);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            width: 90%;
+            max-width: 420px;
+            z-index: 1000;
+            box-shadow: 0 20px 60px rgba(0, 212, 255, 0.3);
+            animation: popIn 0.3s ease;
+        }
+        @keyframes popIn {
+            from { opacity: 0; transform: translate(-50%, -60%) scale(0.9); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+        .delete-confirm h3 {
+            color: #fca5a5;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+        .delete-confirm p {
+            color: #e5e7eb;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+        .delete-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e5e7eb;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .btn-confirm {
+            background: var(--danger);
+            color: white;
+        }
+        .btn-confirm:hover {
+            background: var(--danger-hover);
+        }
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            z-index: 999;
+        }
+       
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.5rem; }
+            .header { flex-direction: column; gap: 1rem; text-align: center; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .controls { flex-direction: column; }
+            .search-box { min-width: 100%; }
+            .table-container { padding: 0 1rem 1.5rem; }
+            thead th, td { padding: 1rem; font-size: 0.85rem; }
+            .btn-delete { padding: 0.4rem 0.6rem; font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-container">
+        <img src="/static/logo.png" alt="Psyclinic AI Logo">
+    </div>
+
+    <div class="glass-panel">
+        <div class="header">
+            <div>
+                <h1>User Database</h1>
+                <p style="color: #94a3b8; margin-top: 0.5rem; font-size: 1.1rem;">Admin Dashboard</p>
+            </div>
+            <a href="/login" class="back-link">Back to Login</a>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="number" id="totalUsers">-</div>
+                <div class="label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="todayUsers">-</div>
+                <div class="label">Registered Today</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="thisWeek">-</div>
+                <div class="label">This Week</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <input type="text" id="searchBox" class="search-box" placeholder="Search by email or name...">
+            <button class="btn btn-primary" onclick="loadUsers()">Refresh</button>
+            <button class="btn btn-export" onclick="exportToCSV()">Export CSV</button>
+            <button class="btn btn-download" onclick="downloadUserCSV()">Download DB</button>
+        </div>
+
+        <div class="table-container">
+            <table id="userTable">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Email</th>
+                        <th>Full Name</th>
+                        <th>Password Hash</th>
+                        <th>Created At</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="userTableBody">
+                    <tr>
+                        <td colspan="7" class="loading">Loading users</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteOverlay" class="overlay hidden"></div>
+    <div id="deleteModal" class="delete-confirm hidden">
+        <h3>Delete User?</h3>
+        <p>This action is <strong>permanent</strong> and cannot be undone. The user will be removed from the database immediately.</p>
+        <div class="delete-actions">
+            <button class="btn btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+            <button class="btn btn-confirm" id="confirmDeleteBtn">Delete</button>
+        </div>
+    </div>
+
+    <script>
+        let allUsers = [];
+        let userToDelete = null;
+
+        async function loadUsers() {
+            try {
+                const response = await fetch('/api/users');
+                const data = await response.json();
+                allUsers = data.users;
+                
+                updateStats(allUsers);
+                displayUsers(allUsers);
+            } catch (error) {
+                document.getElementById('userTableBody').innerHTML = `
+                    <tr><td colspan="7" class="no-data">Error loading users: ${error.message}</td></tr>
+                `;
+            }
+        }
+
+        function updateStats(users) {
+            document.getElementById('totalUsers').textContent = users.length;
+
+            const today = new Date().toISOString().split('T')[0];
+            const todayUsers = users.filter(u => u.created_at.startsWith(today));
+            document.getElementById('todayUsers').textContent = todayUsers.length;
+
+            const weekAgo = new Date();
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            const thisWeek = users.filter(u => new Date(u.created_at) > weekAgo);
+            document.getElementById('thisWeek').textContent = thisWeek.length;
+        }
+
+        function displayUsers(users) {
+            const tbody = document.getElementById('userTableBody');
+            
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="no-data">No users found</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = users.map((user, index) => {
+                const date = new Date(user.created_at);
+                const isNew = (Date.now() - date.getTime()) < 86400000;
+                
+                return `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td class="email">${user.email}</td>
+                        <td>${user.full_name}</td>
+                        <td><span class="hash">${user.password_hash}</span></td>
+                        <td class="date">${formatDate(date)}</td>
+                        <td>
+                            <span class="badge ${isNew ? 'badge-new' : 'badge-old'}">
+                                ${isNew ? 'New' : 'Active'}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-delete" onclick="openDeleteModal('${user.email}')">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function formatDate(date) {
+            const options = { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            };
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        function exportToCSV() {
+            const csv = [
+                ['#', 'Email', 'Full Name', 'Password Hash', 'Created At'],
+                ...allUsers.map((user, i) => [
+                    i + 1,
+                    user.email,
+                    user.full_name,
+                    user.password_hash,
+                    user.created_at
+                ])
+            ].map(row => row.join(',')).join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `users_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        function downloadUserCSV() {
+            window.location.href = '/api/download_users_csv';
+        }
+
+        // Search
+        document.getElementById('searchBox').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = allUsers.filter(user => 
+                user.email.toLowerCase().includes(query) ||
+                user.full_name.toLowerCase().includes(query)
+            );
+            displayUsers(filtered);
+        });
+
+        // Delete Modal
+        function openDeleteModal(email) {
+            userToDelete = email;
+            document.getElementById('deleteOverlay').classList.remove('hidden');
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            userToDelete = null;
+            document.getElementById('deleteOverlay').classList.add('hidden');
+            document.getElementById('deleteModal').classList.add('hidden');
+        }
+
+        document.getElementById('confirmDeleteBtn').onclick = async () => {
+            if (!userToDelete) return;
+
+            try {
+                const response = await fetch(`/api/delete_user/${userToDelete}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    closeDeleteModal();
+                    loadUsers(); // Refresh list
+                } else {
+                    alert('Failed to delete user');
+                }
+            } catch (error) {
+                alert('Network error');
+            }
+        };
+
+        // Close modal on overlay click
+        document.getElementById('deleteOverlay').onclick = closeDeleteModal;
+
+        // Load users
+        loadUsers();
+        setInterval(loadUsers, 30000);
+    </script>
+</body>
+</html>

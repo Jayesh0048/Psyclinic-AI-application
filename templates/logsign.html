@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psyclinic AI | Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+       
+        :root {
+            --bg-primary: #0a0118;
+            --bg-secondary: #1a0b2e;
+            --accent-purple: #8b5cf6;
+            --accent-cyan: #06b6d4;
+            --accent-pink: #ec4899;
+            --glass-bg: rgba(139, 92, 246, 0.05);
+            --glass-border: rgba(139, 92, 246, 0.2);
+            --hologram-blue: #00d4ff;
+            --hologram-cyan: #00fff2;
+        }
+       
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+       
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(ellipse at top, #1a0b2e, #0a0118);
+            background-attachment: fixed;
+            overflow-x: hidden;
+            min-height: 100vh;
+            color: #e5e7eb;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+       
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 90%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+       
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+       
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(139, 92, 246, 0.1), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+            border-radius: 2rem;
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 500px;
+            overflow: hidden;
+        }
+       
+        .logo-container {
+            position: absolute;
+            top: 24px;
+            left: 24px;
+            z-index: 100;
+        }
+        .logo-container img {
+            width: 200px;
+            height: 60px;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 20px rgba(0, 212, 255, 0.8));
+            transition: transform 0.3s ease;
+        }
+        .logo-container img:hover { transform: scale(1.1); }
+       
+        .hero-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #00d4ff 0%, #00fff2 50%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 80px rgba(0, 212, 255, 0.5);
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            animation: glow 3s ease-in-out infinite alternate;
+            text-align: center;
+        }
+       
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.5)); }
+            to { filter: drop-shadow(0 0 40px rgba(0, 255, 242, 0.8)); }
+        }
+       
+        .hero-subtitle {
+            font-size: 1.25rem;
+            font-weight: 300;
+            color: #c7d2fe;
+            letter-spacing: 0.02em;
+            margin-top: 1rem;
+            text-align: center;
+            opacity: 0.9;
+        }
+       
+        .tab-container {
+            display: flex;
+            background: rgba(10, 1, 24, 0.6);
+            border-radius: 1rem;
+            padding: 0.5rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+       
+        .tab {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+       
+        .tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s;
+        }
+       
+        .tab:hover::before { left: 100%; }
+       
+        .tab.active {
+            background: linear-gradient(135deg, #00d4ff, #00fff2);
+            color: #000;
+            font-weight: 800;
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.4);
+        }
+       
+        .form-container {
+            padding: 0 2.5rem 2rem;
+        }
+       
+        .input-group {
+            margin-bottom: 1rem; /* Reduced from 1.5rem */
+            position: relative;
+        }
+       
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem; /* Reduced from 0.75rem */
+            font-weight: 600;
+            color: #c7d2fe;
+            text-transform: uppercase;
+            font-size: 0.8rem; /* Reduced from 0.875rem */
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem; /* Reduced from 0.5rem */
+        }
+       
+        .input-group input {
+            width: 100%;
+            padding: 1rem 1.25rem; /* Slightly reduced from 1.25rem 1.5rem */
+            background: rgba(10, 1, 24, 0.6);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 1rem;
+            color: #e5e7eb;
+            font-size: 1rem; /* Reduced from 1.1rem */
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+       
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--hologram-cyan);
+            box-shadow: 0 0 0 3px rgba(0, 255, 242, 0.1), 0 0 20px rgba(0, 212, 255, 0.4);
+            background: rgba(10, 1, 24, 0.8);
+        }
+       
+        .submit-btn {
+            width: 100%;
+            padding: 1.1rem; /* Slightly reduced from 1.25rem */
+            background: linear-gradient(135deg, #00d4ff 0%, #00fff2 100%);
+            color: #000;
+            font-weight: 800;
+            font-size: 1.15rem; /* Slightly reduced from 1.25rem */
+            border: none;
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.6), 0 0 60px rgba(0, 255, 242, 0.3);
+            position: relative;
+            overflow: hidden;
+            margin-top: 0.75rem; /* Reduced from 1rem */
+        }
+       
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+            transition: left 0.5s;
+        }
+       
+        .submit-btn:hover::before { left: 100%; }
+        .submit-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 50px rgba(0, 212, 255, 0.8), 0 0 80px rgba(0, 255, 242, 0.5);
+        }
+        .submit-btn:active { transform: translateY(-1px); }
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+       
+        .message {
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+            display: none;
+            backdrop-filter: blur(10px);
+            border: 1px solid;
+            animation: slideIn 0.4s ease;
+        }
+       
+        .message.success {
+            background: rgba(34, 197, 94, 0.2);
+            color: #86efac;
+            border-color: rgba(34, 197, 94, 0.5);
+        }
+       
+        .message.error {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border-color: rgba(239, 68, 68, 0.5);
+        }
+       
+        .message.show {
+            display: block;
+        }
+       
+        .form {
+            display: none;
+        }
+        .form.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+       
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+       
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+       
+        .footer {
+            text-align: center;
+            padding: 1.5rem 2.5rem 2rem; /* Reduced bottom padding */
+            color: #94a3b8;
+            font-size: 0.875rem;
+        }
+       
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.5rem; }
+            .hero-subtitle { font-size: 1.1rem; }
+            .logo-container img { width: 150px; height: 45px; }
+            .form-container { padding: 0 2rem 1.5rem; }
+            .input-group { margin-bottom: 0.9rem; }
+            .input-group label { margin-bottom: 0.4rem; font-size: 0.75rem; }
+            .input-group input { padding: 0.9rem 1.1rem; font-size: 0.95rem; }
+            .submit-btn { padding: 1rem; font-size: 1.1rem; }
+            .footer { padding: 1rem 2rem 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-container">
+        <img src="/static/logo.png" alt="Psyclinic AI Logo">
+    </div>
+
+    <div class="glass-panel">
+        <div class="text-center pt-12 pb-8 px-6">
+            <h1 class="hero-title mb-2">Psyclinic AI</h1>
+            <p class="hero-subtitle">Real-World Therapy Training Platform</p>
+        </div>
+
+        <div class="form-container">
+            <div class="tab-container">
+                <button class="tab active" onclick="switchTab('login')">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Login
+                </button>
+                <button class="tab" onclick="switchTab('signup')">
+                    <i class="fas fa-user-plus mr-2"></i>Sign Up
+                </button>
+            </div>
+
+            <div id="message" class="message"></div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="form active" onsubmit="handleLogin(event)">
+                <div class="input-group">
+                    <label for="loginEmail">
+                        <i class="fas fa-envelope text-cyan-400"></i>
+                        Email Address
+                    </label>
+                    <input type="email" id="loginEmail" required placeholder="you@example.com">
+                </div>
+                <div class="input-group">
+                    <label for="loginPassword">
+                        <i class="fas fa-lock text-pink-400"></i>
+                        Password
+                    </label>
+                    <input type="password" id="loginPassword" required placeholder="Enter your password">
+                </div>
+                <button type="submit" class="submit-btn" id="loginBtn">
+                    <span id="loginBtnText">
+                        <i class="fas fa-sign-in-alt mr-3"></i>Login
+                    </span>
+                    <span id="loginBtnLoader" class="hidden">
+                        <i class="fas fa-spinner fa-spin mr-3"></i>Authenticating...
+                    </span>
+                </button>
+            </form>
+
+            <!-- Signup Form -->
+            <form id="signupForm" class="form" onsubmit="handleSignup(event)">
+                <div class="input-group">
+                    <label for="signupName">
+                        <i class="fas fa-user text-cyan-400"></i>
+                        Full Name
+                    </label>
+                    <input type="text" id="signupName" required placeholder="John Doe">
+                </div>
+                <div class="input-group">
+                    <label for="signupEmail">
+                        <i class="fas fa-envelope text-cyan-400"></i>
+                        Email Address
+                    </label>
+                    <input type="email" id="signupEmail" required placeholder="you@example.com">
+                </div>
+                <div class="input-group">
+                    <label for="signupPassword">
+                        <i class="fas fa-lock text-pink-400"></i>
+                        Password
+                    </label>
+                    <input type="password" id="signupPassword" required placeholder="At least 6 characters" minlength="6">
+                </div>
+                <div class="input-group">
+                    <label for="signupConfirmPassword">
+                        <i class="fas fa-shield-alt text-pink-400"></i>
+                        Confirm Password
+                    </label>
+                    <input type="password" id="signupConfirmPassword" required placeholder="Repeat password" minlength="6">
+                </div>
+                <button type="submit" class="submit-btn" id="signupBtn">
+                    <span id="signupBtnText">
+                        <i class="fas fa-user-plus mr-3"></i>Create Account
+                    </span>
+                    <span id="signupBtnLoader" class="hidden">
+                        <i class="fas fa-spinner fa-spin mr-3"></i>Creating Account...
+                    </span>
+                </button>
+            </form>
+        </div>
+
+        <div class="footer">
+            &copy; 2025 Psyclinic AI. All rights reserved.
+        </div>
+    </div>
+
+    <script>
+        // Same script as your original - no changes
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            document.querySelectorAll('.form').forEach(f => f.classList.remove('active'));
+            document.getElementById(tab + 'Form').classList.add('active');
+            hideMessage();
+        }
+
+        function showMessage(text, type) {
+            const msg = document.getElementById('message');
+            msg.textContent = text;
+            msg.className = `message ${type} show`;
+        }
+
+        function hideMessage() {
+            const msg = document.getElementById('message');
+            msg.className = 'message';
+        }
+
+        function toggleButtonLoading(btnId, isLoading) {
+            const btn = document.getElementById(btnId);
+            const text = document.getElementById(btnId.replace('Btn', 'BtnText'));
+            const loader = document.getElementById(btnId.replace('Btn', 'BtnLoader'));
+            btn.disabled = isLoading;
+            text.classList.toggle('hidden', isLoading);
+            loader.classList.toggle('hidden', !isLoading);
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            toggleButtonLoading('loginBtn', true);
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (response.ok) {
+                    showMessage('Login successful! Redirecting...', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/app';
+                    }, 1500);
+                } else {
+                    const data = await response.json();
+                    showMessage(data.detail || 'Invalid email or password', 'error');
+                }
+            } catch (error) {
+                showMessage('Network error. Please try again.', 'error');
+            } finally {
+                toggleButtonLoading('loginBtn', false);
+            }
+        }
+
+        async function handleSignup(event) {
+            event.preventDefault();
+            
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('signupConfirmPassword').value;
+
+            if (password !== confirmPassword) {
+                showMessage('Passwords do not match!', 'error');
+                return;
+            }
+
+            toggleButtonLoading('signupBtn', true);
+
+            const email = document.getElementById('signupEmail').value;
+            const full_name = document.getElementById('signupName').value;
+
+            try {
+                const response = await fetch('/api/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, full_name })
+                });
+
+                if (response.ok) {
+                    showMessage('Account created! Please login.', 'success');
+                    setTimeout(() => {
+                        switchTab('login');
+                        document.getElementById('loginEmail').value = email;
+                    }, 2000);
+                } else {
+                    const data = await response.json();
+                    showMessage(data.detail || 'Failed to create account', 'error');
+                }
+            } catch (error) {
+                showMessage('Network error. Please try again.', 'error');
+            } finally {
+                toggleButtonLoading('signupBtn', false);
+            }
+        }
+    </script>
+</body>
+</html>
